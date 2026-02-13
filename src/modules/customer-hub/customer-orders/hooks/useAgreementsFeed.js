@@ -83,40 +83,34 @@ export const useAgreementsFeed = ({
     q.fetchNextPage()
   }, [root, inView, q.hasNextPage, q.isFetchingNextPage, q.fetchNextPage, canScroll])
 
-  const refreshFirstPage = useCallback(async () => {
-    if (!mailbox) return
-    if (refreshingFirstRef.current) return
+const refreshFirstPage = useCallback(async () => {
+  if (!mailbox) return
+  if (refreshingFirstRef.current) return
 
-    refreshingFirstRef.current = true
-    setIsRefreshingFirstPage(true)
+  refreshingFirstRef.current = true
+  setIsRefreshingFirstPage(true)
 
-    try {
-      const first = await datatableAgreementsSidebar({ skip: 0, limit, s, mailbox })
-      onBackendStatusChange?.(false)
+  try {
+    await queryClient.cancelQueries({ queryKey, exact: true })
 
-      queryClient.setQueryData(queryKey, (old) => {
-        const oldPages = old?.pages || []
-        const oldPageParams = old?.pageParams || []
+    const first = await datatableAgreementsSidebar({ skip: 0, limit, s, mailbox })
+    onBackendStatusChange?.(false)
 
-        if (!oldPages.length) return { pages: [first], pageParams: [0] }
+    queryClient.setQueryData(queryKey, () => ({
+      pages: [first],
+      pageParams: [0],
+    }))
 
-        const pages = [...oldPages]
-        pages[0] = first
+    scrolledRef.current = false
+    setCanScroll(false)
+  } catch (err) {
+    onBackendStatusChange?.(isBackendUnreachable(err), err)
+  } finally {
+    setIsRefreshingFirstPage(false)
+    refreshingFirstRef.current = false
+  }
+}, [mailbox, limit, s, queryClient, queryKey, onBackendStatusChange])
 
-        const pageParams = oldPageParams.length
-          ? [...oldPageParams]
-          : pages.map((_, i) => i * limit)
-
-        pageParams[0] = 0
-        return { ...old, pages, pageParams }
-      })
-    } catch (err) {
-      onBackendStatusChange?.(isBackendUnreachable(err), err)
-    } finally {
-      setIsRefreshingFirstPage(false)
-      refreshingFirstRef.current = false
-    }
-  }, [mailbox, limit, s, queryClient, queryKey, onBackendStatusChange])
 
   useEffect(() => {
     const state = queryClient.getQueryState(queryKey)

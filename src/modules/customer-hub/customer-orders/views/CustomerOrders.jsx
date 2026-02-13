@@ -239,14 +239,20 @@ const CustomerOrders = () => {
     refreshFirstPage()
   })
 
-  const handleRefresh = useCallback(() => {
-    refreshFirstPage()
+  const handleRefresh = useCallback(async () => {
+    await refreshFirstPage()
 
-    if (selected?.id) {
-      const optimisticRow = rows?.length ? rows.find((r) => r.id === selected.id) : null
-      loadAgreement(selected.id, optimisticRow)
+    if (listRoot) {
+      listRoot.scrollTo({ top: 0, behavior: "smooth" })
     }
-  }, [refreshFirstPage, selected?.id, rows, loadAgreement])
+  
+    if (selected?.id) {
+      const optimisticRow = rows?.find((r) => r.id === selected.id) ?? null
+      void loadAgreement(selected.id, optimisticRow)
+    }
+  }, [refreshFirstPage, listRoot, selected?.id, rows, loadAgreement])
+
+
 
   const handleResetPayload = useCallback(async () => {
     if (!selected?.id) return
