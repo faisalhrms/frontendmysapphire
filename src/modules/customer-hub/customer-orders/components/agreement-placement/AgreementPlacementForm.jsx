@@ -120,6 +120,7 @@ const AgreementPlacementForm = forwardRef(
     const matchesCount = choices?.length || 0
     const hasMatches = matchesCount > 0
     const hasMultipleMatches = matchesCount > 1
+    const disableSubmitWhenNoMatch = statusMsg && !hasMatches
 
     const status = propStatus ?? seed?.status
     const yarnTermsStatus = seed?.yarn_terms_status
@@ -787,7 +788,7 @@ const AgreementPlacementForm = forwardRef(
                   onSaveDraft={doSaveDraft}
                   onSubmit={() => setSubmitModalOpen(true)}
                   disabledSubmit={
-                    disabledSubmit || status === "under_approval"
+                    disabledSubmit || status === "under_approval" || disableSubmitWhenNoMatch
                   }
                   disabled={saving || backendDown}
                   hideSubmit={hideSubmit}

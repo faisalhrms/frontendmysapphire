@@ -1,31 +1,11 @@
-import React, {
-  Fragment,
-  useMemo,
-  useState,
-  useCallback,
-  useEffect,
-  useRef,
-} from "react"
+import React, {Fragment, useMemo, useState, useCallback, useEffect, useRef,}
+from "react"
 import { useSelector } from "react-redux"
 import dayjs from "dayjs"
 import mail from "@assets/images/icon/viewicon.svg"
 import Avatar from "@components/Avatar.jsx"
 import LoadingSpinner from "@components/LoadingSpinner.jsx"
-import {
-  Plus,
-  Edit3,
-  FileSignature,
-  Calculator,
-  ClipboardList,
-  ChevronDown,
-  FolderSync,
-  RotateCcw,
-  Trash2,
-  Mail,
-  FileText,
-  MessageSquareText,
-  Loader2,
-} from "lucide-react"
+import {Plus, Edit3, FileSignature, Calculator, ClipboardList, ChevronDown, FolderSync, RotateCcw, Trash2, Mail, FileText, MessageSquareText, Loader2,} from "lucide-react"
 import NavTabs from "@modules/customer-hub/customer-orders/components/NavTabs.jsx"
 import AirjetCostingBaseSection from "@modules/customer-hub/customer-orders/components/airjet-costing/AirjetCostingBaseSection.jsx"
 import AgreementPlacementModal from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementModal.jsx"
@@ -37,19 +17,13 @@ import { useSearchHook } from "@hooks/useSearchHook.js"
 import { useAgreementsFeed } from "@modules/customer-hub/customer-orders/hooks/useAgreementsFeed.js"
 import { useMailboxes } from "@modules/customer-hub/customer-orders/hooks/useMailboxes.js"
 import AgreementPlacementForm from "@modules/customer-hub/customer-orders/components/agreement-placement/AgreementPlacementForm.jsx"
-import {
-  getAgreement,
-  getAgreementMentionUsers,
-  resetAgreementPayload,
-  deleteAgreement,
-  backendUnreachableMessage,
-  isBackendUnreachable,
-} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
+import {getAgreement, getAgreementMentionUsers, resetAgreementPayload, deleteAgreement, backendUnreachableMessage, isBackendUnreachable,} from "@modules/customer-hub/customer-orders/services/AgreementService.js"
 import PrGenerationSection from "@modules/customer-hub/customer-orders/components/pr-generation/PrGenerationSection.jsx"
 import HasPermission from "@components/HasPermission.jsx"
 import Discussion from "@components/Discussion.jsx"
 import AlertModalPortal from "@components/AlertModalPortal.jsx"
 import AgreementDetailShimmer from "@modules/customer-hub/customer-orders/components/AgreementDetailShimmer.jsx"
+import {useInternetStatus} from "@modules/customer-hub/customer-orders/hooks/useInternetStatus.js";
 
 const srcLabel = (s) =>
   s === "api" ? "API" : s ? s.charAt(0).toUpperCase() + s.slice(1) : ""
@@ -78,34 +52,40 @@ const CustomerOrders = () => {
   const user = useSelector((s) => s.auth.user)
   const LIST_LIMIT = 10
   const { searchTerm, handleSearchChange } = useSearchHook(1)
-
-  const [isOnline, setIsOnline] = useState(
-    typeof navigator !== "undefined" ? navigator.onLine : true
-  )
   const [backendDown, setBackendDown] = useState(false)
   const [backendMsg, setBackendMsg] = useState("")
 
-  useEffect(() => {
-    const on = () => setIsOnline(true)
-    const off = () => setIsOnline(false)
-    window.addEventListener("online", on)
-    window.addEventListener("offline", off)
-    return () => {
-      window.removeEventListener("online", on)
-      window.removeEventListener("offline", off)
-    }
-  }, [])
 
   const markBackendOk = useCallback(() => {
     setBackendDown(false)
     setBackendMsg("")
   }, [])
 
-  const markBackendDown = useCallback((err) => {
-    if (!isBackendUnreachable(err)) return
-    setBackendDown(true)
-    setBackendMsg(backendUnreachableMessage(err))
-  }, [])
+  const { isOnline, probe } = useInternetStatus({
+    probeUrls: [
+      "https://clients3.google.com/generate_204",
+      "https://www.msftconnecttest.com/connecttest.txt",
+    ],
+    pollMs: 0,
+    timeoutMs: 3000,
+  })
+
+  const markBackendDown = useCallback(
+    async (err) => {
+      if (!isBackendUnreachable(err)) return
+
+      if (typeof navigator !== "undefined" && navigator.onLine === false) return
+
+      const online = await probe()
+      if (!online) return
+
+      setBackendDown(true)
+      setBackendMsg(backendUnreachableMessage(err))
+    },
+    [probe]
+  )
+
+
 
   const normalizedSearchTerm = useMemo(
     () => normalizeSearch(searchTerm),
@@ -320,17 +300,18 @@ const CustomerOrders = () => {
                 All Orders
               </h6>
 
-              {(!isOnline || backendDown) && (
-                <Pill
-                  cls={
-                    !isOnline
-                      ? "bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300"
-                      : "bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300"
-                  }
-                >
-                  {!isOnline ? "Offline" : "Backend issue"}
+              {!isOnline && (
+                <Pill cls="bg-rose-100 text-rose-700 dark:bg-rose-900/20 dark:text-rose-300">
+                  Offline
                 </Pill>
               )}
+
+              {isOnline && backendDown && (
+                <Pill cls="bg-amber-100 text-amber-700 dark:bg-amber-900/20 dark:text-amber-300">
+                  Backend issue
+                </Pill>
+              )}
+
             </div>
 
             <div className="flex items-center gap-2">
