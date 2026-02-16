@@ -61,7 +61,7 @@ const ChatInputBar = ({
 
   return (
     <div
-      className={`relative w-full max-w-5xl mx-auto bg-white dark:bg-bodybg rounded-xl shadow-xl ring-1 ring-black/5 border border-gray-200 px-6 pt-4 ${pad}`}
+      className={`relative w-full max-w-5xl mx-auto rounded-2xl border border-slate-200/80 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/90 backdrop-blur shadow-[0_12px_40px_-20px_rgba(15,23,42,0.55)] px-5 sm:px-6 pt-4 ${pad}`}
     >
       {isQc ? (
         <QCPanel
@@ -91,7 +91,7 @@ const ChatInputBar = ({
               autoResize?.(e)
             }}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && (e.preventDefault(), handleSend())}
-            className="w-full border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6"
+            className="w-full border-none resize-none bg-transparent focus:outline-none min-h-[3.25rem] leading-6 text-sm text-slate-700 dark:text-slate-100 placeholder:text-slate-400"
           />
 
           {showSuggestions && (
@@ -100,7 +100,7 @@ const ChatInputBar = ({
                 <button
                   key={i}
                   onClick={() => ask?.(s)}
-                  className="shrink-0 text-[11px] px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                  className="shrink-0 text-[11px] px-3 py-1 rounded-full border border-slate-200/80 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700"
                 >
                   {s}
                 </button>
@@ -113,8 +113,10 @@ const ChatInputBar = ({
       <div className="absolute bottom-3 left-3 flex items-center gap-2">
         <button
           onClick={toggleWebSearch}
-          className={`h-10 w-10 rounded-full flex items-center justify-center border ${
-            isWebSearch ? "bg-blue text-white" : "text-info"
+          className={`h-10 w-10 rounded-full flex items-center justify-center border transition ${
+            isWebSearch
+              ? "bg-blue text-white border-blue shadow-lg shadow-blue/30"
+              : "text-info border-slate-200 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
           }`}
         >
           <i className="ri-earth-line text-xl"></i>
@@ -125,7 +127,7 @@ const ChatInputBar = ({
             <div className="relative">
               <button
                 onClick={() => setModeOpen((o) => !o)}
-                className="h-10 px-4 rounded-lg border text-sm flex items-center gap-1"
+                className="h-10 px-4 rounded-xl border border-slate-200 dark:border-slate-700 text-sm flex items-center gap-1 bg-white/80 dark:bg-slate-900/80"
               >
                 {modeSelection}
                 <i className="ri-arrow-down-s-line text-lg"></i>
@@ -137,14 +139,14 @@ const ChatInputBar = ({
                     setModeSelection("Select Agent")
                     setModeOpen(false)
                   }}
-                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+                  className="absolute -top-2 -right-2 h-5 w-5 rounded-full border border-slate-200 bg-white dark:border-slate-700 dark:bg-gray-800 flex items-center justify-center"
                 >
                   <i className="ri-close-line text-xs"></i>
                 </button>
               )}
 
               {modeOpen && (
-                <div className="absolute bottom-full left-0 mb-2 w-56 bg-white dark:bg-gray-800 border rounded-lg shadow-xl z-50 max-h-60 overflow-auto">
+                <div className="absolute bottom-full left-0 mb-2 w-56 bg-white/95 dark:bg-gray-800/95 border border-slate-200 dark:border-slate-700 rounded-xl shadow-xl z-50 max-h-60 overflow-auto backdrop-blur">
                   <button
                     onClick={() => {
                       setModeSelection("Select Agent")
@@ -225,10 +227,10 @@ const ChatInputBar = ({
                   <button
                     key={s}
                     onClick={() => toggleSub(s)}
-                    className={`px-3 py-1 rounded-full text-xs border ${
+                    className={`px-3 py-1 rounded-full text-xs border transition ${
                       active(s)
-                        ? "bg-indigo/80 text-white border-indigo"
-                        : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                        ? "bg-indigo text-white border-indigo shadow-sm"
+                        : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                     }`}
                   >
                     {s.toUpperCase()}
@@ -243,16 +245,18 @@ const ChatInputBar = ({
       <div className="absolute bottom-3 right-3 flex items-center gap-2">
         <button
           onClick={startVoice}
-          className={`h-10 w-10 rounded-full flex items-center justify-center ${
-            listening ? "ring ring-red bg-outline-danger" : "bg-outline-success"
-          }`}
-        >
+            className={`h-10 w-10 rounded-full flex items-center justify-center transition ${
+              listening
+                ? "ring ring-red bg-outline-danger"
+                : "bg-outline-success shadow-lg shadow-emerald-500/25 hover:brightness-110"
+            }`}
+          >
           <i className={`ri-voiceprint-fill text-xl ${listening ? "text-red animate-pulse" : ""}`}></i>
         </button>
 
         <button
           onClick={handleSend}
-          className="h-10 w-10 rounded-full bg-outline-primary text-white flex items-center justify-center"
+          className="h-10 w-10 rounded-full bg-outline-primary text-white flex items-center justify-center shadow-lg shadow-blue/30 hover:brightness-110 transition"
         >
           <i className="ri-arrow-up-line text-xl"></i>
         </button>

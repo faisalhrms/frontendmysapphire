@@ -51,12 +51,12 @@ const ChatInputBox = ({
 
   if (isHrEmployee) {
     return (
-      <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-hidden shadow-xl ring-2 ring-gray-300">
-        <div className="flex items-center gap-2 p-2 border-b border-gray-200 dark:border-gray-700">
+      <div className="relative w-full max-w-4xl rounded-2xl overflow-hidden border border-slate-200/80 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/90 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.5)] backdrop-blur">
+        <div className="flex items-center gap-2 p-3 border-b border-gray-200 dark:border-gray-700">
           <div className="relative">
             <button
               onClick={() => setModeOpen((o) => !o)}
-              className="inline-flex items-center h-9 px-3 rounded-full border bg-transparent text-xs"
+              className="inline-flex items-center h-9 px-3 rounded-full border border-slate-200 dark:border-slate-700 bg-transparent text-xs"
             >
               {modeSelection}
               <i className="ri-arrow-down-s-line ml-2"></i>
@@ -65,7 +65,7 @@ const ChatInputBox = ({
             {modeSelection !== "Select Agent" && (
               <button
                 onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
-                className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+                className="absolute -top-2 -right-2 h-5 w-5 rounded-full border border-slate-200 bg-white dark:border-slate-700 dark:bg-gray-800 flex items-center justify-center"
                 aria-label="Clear Agent"
               >
                 <i className="ri-close-line text-[10px]"></i>
@@ -73,7 +73,7 @@ const ChatInputBox = ({
             )}
 
             {modeOpen && (
-              <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
+              <div className="absolute left-0 mt-2 w-44 bg-white/95 dark:bg-gray-800/95 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 text-sm backdrop-blur">
                 <button
                   onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
                   className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -136,8 +136,8 @@ const ChatInputBox = ({
                 onClick={() => toggleSub(s)}
                 className={`px-3 py-1 rounded-full text-xs border ${
                   active(s)
-                    ? "bg-indigo/80 text-white border-indigo"
-                    : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                    ? "bg-indigo text-white border-indigo shadow-sm"
+                    : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                 }`}
               >
                 {s.toUpperCase()}
@@ -156,8 +156,8 @@ const ChatInputBox = ({
   const padClass = isQc || isCompetitor ? "pb-20" : "pb-16"
 
   return (
-    <div className="relative w-full max-w-4xl bg-white dark:bg-bodybg rounded-xl overflow-visible shadow-xl ring-2 ring-gray-300">
-      <div className={`rounded-t-xl p-2 ${padClass}`}>
+    <div className="relative w-full max-w-4xl rounded-2xl overflow-visible border border-slate-200/80 dark:border-slate-700/70 bg-white/95 dark:bg-slate-900/90 shadow-[0_20px_45px_-20px_rgba(15,23,42,0.5)] backdrop-blur">
+      <div className={`rounded-t-2xl p-2 ${padClass}`}>
         {isQc ? (
           <QCPanel
             qcTarget={qcTarget}
@@ -179,7 +179,7 @@ const ChatInputBox = ({
             <textarea
               ref={inputRef}
               rows={1}
-              className="min-h-[7rem] w-full border-none resize-none p-4 text-sm bg-transparent focus:outline-none"
+              className="min-h-[7rem] w-full border-none resize-none p-4 text-sm text-slate-700 dark:text-slate-100 bg-transparent focus:outline-none placeholder:text-slate-400"
               placeholder="What do you want to know?"
               value={input}
               onChange={(e) => { setInput(e.target.value); autoResize(e) }}
@@ -192,7 +192,7 @@ const ChatInputBox = ({
                   <button
                     key={i}
                     onClick={() => ask?.(s)}
-                    className="mt-1 shrink-0 text-[11px] px-3 py-1 rounded-full bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"
+                    className="mt-1 shrink-0 text-[11px] px-3 py-1 rounded-full border border-slate-200/80 bg-slate-50 text-slate-600 hover:bg-slate-100 dark:border-slate-600 dark:bg-slate-800/80 dark:text-slate-200 dark:hover:bg-slate-700"
                   >
                     {s}
                   </button>
@@ -203,12 +203,12 @@ const ChatInputBox = ({
         )}
       </div>
 
-      <div className="absolute inset-x-0 bottom-0 px-4 py-3 bg-white dark:bg-bodybg flex items-center rounded-b-xl">
+      <div className="absolute inset-x-0 bottom-0 px-4 py-3 bg-white/90 dark:bg-slate-900/90 border-t border-slate-200/80 dark:border-slate-700 flex items-center rounded-b-2xl backdrop-blur">
         <div className="flex items-center gap-2">
           <button
             onClick={toggleWebSearch}
             className={`h-9 w-9 rounded-full border flex items-center justify-center ${
-              isWebSearch ? "bg-blue text-white" : "text-info"
+              isWebSearch ? "bg-blue text-white border-blue shadow-lg shadow-blue/30" : "text-info border-slate-200 hover:bg-slate-100 dark:border-slate-700 dark:hover:bg-slate-800"
             }`}
           >
             <i className="ri-earth-line text-lg"></i>
@@ -217,7 +217,7 @@ const ChatInputBox = ({
           <div className="relative">
             <button
               onClick={() => setModeOpen((o) => !o)}
-              className="inline-flex items-center h-9 px-3 rounded-full border bg-transparent text-xs"
+              className="inline-flex items-center h-9 px-3 rounded-full border border-slate-200 dark:border-slate-700 bg-transparent text-xs"
             >
               {modeSelection}
               <i className="ri-arrow-down-s-line ml-2"></i>
@@ -226,7 +226,7 @@ const ChatInputBox = ({
             {modeSelection !== "Select Agent" && (
               <button
                 onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }}
-                className="absolute -top-2 -right-2 h-5 w-5 rounded-full border bg-white dark:bg-gray-800 flex items-center justify-center"
+                className="absolute -top-2 -right-2 h-5 w-5 rounded-full border border-slate-200 bg-white dark:border-slate-700 dark:bg-gray-800 flex items-center justify-center"
                 aria-label="Clear source"
               >
                 <i className="ri-close-line text-[10px]"></i>
@@ -234,7 +234,7 @@ const ChatInputBox = ({
             )}
 
             {modeOpen && (
-              <div className="absolute left-0 mt-2 w-44 bg-white dark:bg-gray-800 border rounded-md shadow-lg z-20 text-sm">
+              <div className="absolute left-0 mt-2 w-44 bg-white/95 dark:bg-gray-800/95 border border-slate-200 dark:border-slate-700 rounded-xl shadow-lg z-20 text-sm backdrop-blur">
                 <button onClick={() => { setModeSelection("Select Agent"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Select Agent</button>
                 <HasPermission permission='auth.chatbot_export_data'>
                   <button onClick={() => { setModeSelection("Export Data"); setModeOpen(false) }} className="block w-full text-left px-3 py-2 hover:bg-gray-100 dark:hover:bg-gray-700">Export Data</button>
@@ -263,8 +263,8 @@ const ChatInputBox = ({
                   onClick={() => toggleSub(s)}
                   className={`px-3 py-1 rounded-full text-xs border ${
                     active(s)
-                      ? "bg-indigo/80 text-white border-indigo"
-                      : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200"
+                      ? "bg-indigo text-white border-indigo shadow-sm"
+                      : "bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-200 border-gray-200 hover:bg-gray-100 dark:hover:bg-gray-600"
                   }`}
                 >
                   {s.toUpperCase()}
@@ -277,15 +277,17 @@ const ChatInputBox = ({
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={startVoice}
-            className={`h-9 w-9 rounded-full flex items-center justify-center ${
-              listening ? "ring ring-red bg-outline-danger" : "bg-outline-success ti-btn-icon"
+            className={`h-9 w-9 rounded-full flex items-center justify-center transition ${
+              listening
+                ? "ring ring-red bg-outline-danger"
+                : "bg-outline-success ti-btn-icon shadow-lg shadow-emerald-500/25 hover:brightness-110"
             }`}
           >
             <i className={`ri-voiceprint-fill text-lg ${listening ? "text-red animate-pulse" : ""}`}></i>
           </button>
           <button
             onClick={handleSend}
-            className="h-9 w-9 rounded-full bg-outline-primary text-white ti-btn-icon flex items-center justify-center"
+            className="h-9 w-9 rounded-full bg-outline-primary text-white ti-btn-icon flex items-center justify-center shadow-lg shadow-blue/30 hover:brightness-110 transition"
           >
             <i className="ri-arrow-up-line text-lg"></i>
           </button>
