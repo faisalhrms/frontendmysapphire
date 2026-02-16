@@ -150,14 +150,15 @@ export default function ChatBot() {
   const hrActive = useCallback((s) => hrSubtypes?.[0] === s, [hrSubtypes])
 
   const rootClass = isHrEmployeePane
-    ? "min-h-screen flex flex-col bg-white dark:bg-bodybg"
-    : "min-h-screen flex flex-col bg-white dark:bg-bodybg p-2 mt-2 rounded-md"
+    ? "min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-bodybg dark:to-slate-900"
+    : "min-h-screen flex flex-col bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-bodybg dark:to-slate-900 p-2 sm:p-3 mt-2 rounded-2xl"
 
   if (!isBotActive && activeView === "assistant" && !isHrEmployeePane) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-white dark:bg-bodybg">
+      <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-gradient-to-b from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-bodybg dark:to-slate-900">
         <LottieLoader animationData={botLoading} width={100} height={100} speed={0.3} opacity={1} />
-        <p className="mb-6 text-xl font-semibold">SappSense</p>
+        <p className="mb-2 text-2xl font-semibold tracking-tight text-slate-800 dark:text-slate-100">SappSense</p>
+        <p className="mb-6 text-sm text-slate-500 dark:text-slate-300">AI workspace assistant for faster business decisions</p>
         <ChatInputBox
           input={input}
           setInput={setInput}
@@ -193,7 +194,7 @@ export default function ChatBot() {
 
   return (
     <div className={rootClass}>
-      <div className="sticky top-0 z-50 flex items-center justify-between border-b dark:border-defaultborder/10 px-4 py-2 bg-white dark:bg-bodybg overflow-visible">
+      <div className="sticky top-0 z-50 flex items-center justify-between border-b border-slate-200/70 dark:border-slate-700/70 px-4 py-3 bg-white/90 dark:bg-bodybg/90 backdrop-blur overflow-visible">
         <div className="flex items-center gap-2 flex-wrap">
           <LottieLoader animationData={botLoading} width={40} height={40} speed={0.3} opacity={1} />
           <Link to="#" className="font-semibold text-sm text-defaulttextcolor dark:text-defaulttextcolor/70">
@@ -364,7 +365,7 @@ export default function ChatBot() {
         </div>
 
         {activeView === "assistant" && !isHrEmployeePane && (
-          <button onClick={handleReset} className="inline-flex items-center gap-2 px-5 py-1 rounded-full ring-1 ring-black/5">
+          <button onClick={handleReset} className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white dark:bg-slate-900 ring-1 ring-slate-300/70 dark:ring-slate-700/80 shadow-sm hover:shadow transition">
             <i className="ri-edit-box-line text-base" />
             <span>New Chat</span>
           </button>
@@ -383,7 +384,7 @@ export default function ChatBot() {
         <>
           <div className="flex-1 min-h-0 overflow-hidden">
             <PerfectScrollbar className="h-full" containerRef={(ref) => (psContainerRef.current = ref)}>
-              <ul className="px-16 py-4 space-y-6" style={{ paddingBottom: dockH + 24 }} onClick={handleLLMLinkClick}>
+              <ul className="px-4 sm:px-8 lg:px-16 py-6 space-y-7" style={{ paddingBottom: dockH + 24 }} onClick={handleLLMLinkClick}>
                 {messages.map((m, i) =>
                   m.type === "bot" ? (
                     <li key={i} className="space-y-1">
@@ -397,13 +398,13 @@ export default function ChatBot() {
                         />
                         <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                         {!m.loading && (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-slate-500">
                             {m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         )}
                       </div>
 
-                      <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-4xl">
+                      <div className="ml-8 bg-white dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 rounded-2xl border border-slate-200/80 dark:border-slate-700 px-4 py-3 max-w-4xl shadow-sm">
                         {m.loading && m.mode === "qc" ? (
                           <LiveScanLCD url={qcTarget} shots={2} delayMs={1800} maxWidth={680} />
                         ) : m.loading ? (
@@ -462,12 +463,12 @@ export default function ChatBot() {
                     <li key={i} className="flex justify-end items-start space-x-3">
                       <div className="flex flex-col items-end text-right max-w-lg space-y-1">
                         <div className="flex items-center gap-2 justify-end">
-                          <span className="text-xs text-gray-500">
+                          <span className="text-xs text-slate-500">
                             {m.time?.toLocaleTimeString?.([], { hour: "2-digit", minute: "2-digit" })}
                           </span>
                         </div>
-                        <div className="bg-sky-100 dark:bg-blue text-blue dark:text-white rounded-lg px-4 py-3">
-                          <p className="text-xs">{m.text}</p>
+                        <div className="bg-gradient-to-r from-sky-600 to-indigo-600 text-white rounded-2xl px-4 py-3 shadow-md shadow-sky-600/20">
+                          <p className="text-xs sm:text-sm leading-relaxed">{m.text}</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-center">
@@ -483,7 +484,7 @@ export default function ChatBot() {
                       <LottieLoader animationData={botLoading} width={40} height={40} speed={1} opacity={1} />
                       <span className="font-semibold text-sm text-gray-800 dark:text-gray-200">SappSense</span>
                     </div>
-                    <div className="ml-8 bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg px-4 py-3 max-w-lg">
+                    <div className="ml-8 bg-white dark:bg-slate-800/90 text-gray-900 dark:text-gray-100 rounded-2xl border border-slate-200/80 dark:border-slate-700 px-4 py-3 max-w-lg shadow-sm">
                       <div className="flex items-center gap-2 text-xs text-gray-500">
                         <span>
                           Thinking <TypingIndicator />
